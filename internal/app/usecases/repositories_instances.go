@@ -1,0 +1,9 @@
+package usecases
+
+import "github.com/EvertonTomalok/marketplace-health/internal/app/ports/gateway"
+
+var DocumentWorkerRepository gateway.DocumentWorkerGateway
+var FacilityRequirementsRepository gateway.FacilityRequirementsGateway
+var FacilityRepository gateway.FacilityGateway
+var ShiftRepository gateway.ShiftGateway
+var WorkerRepository gateway.WorkerGateway

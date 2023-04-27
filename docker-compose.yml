@@ -1,0 +1,24 @@
+version: "3.3"
+
+services:
+  web:
+    platform: linux/x86_64
+    container_name: web
+    build: .
+    environment:
+      - APP_DATABASE_HOST=postgres://postgres:postgres@host.docker.internal:5432/postgres?sslmode=disable
+      - APP_DATABASE_PORT=5432
+      - APP_DATABASE_NAME=postgres
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8000
+      - LOG_LEVEL=DEBUG
+    command: ["/exe", "server"]
+    ports:
+      - "0.0.0.0:8000:8000"
+    volumes:
+      -  .:/go/src/app
+volumes:
+  .pgdata:
+    driver: local
+  .mongo:
+    driver: local

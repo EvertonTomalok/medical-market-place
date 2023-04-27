@@ -1,0 +1,179 @@
+definitions:
+  dto.FacilityDTO:
+    properties:
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      name:
+        type: string
+    type: object
+  dto.GroupedByDateShift:
+    additionalProperties:
+      items:
+        $ref: '#/definitions/dto.ShiftDTO'
+      type: array
+    type: object
+  dto.ShiftDTO:
+    properties:
+      end:
+        type: string
+      facility:
+        $ref: '#/definitions/dto.FacilityDTO'
+      facility_id:
+        type: integer
+      id:
+        type: integer
+      is_deleted:
+        type: boolean
+      profession:
+        type: string
+      start:
+        type: string
+      worker_id:
+        type: integer
+    type: object
+  entities.Facility:
+    properties:
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      name:
+        type: string
+    type: object
+  entities.Profession:
+    enum:
+    - CNA
+    - LVW
+    - RN
+    type: string
+    x-enum-varnames:
+    - CNA
+    - LVW
+    - RN
+  entities.Worker:
+    properties:
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      name:
+        type: string
+      profession:
+        $ref: '#/definitions/entities.Profession'
+    type: object
+  rest.BadResponse:
+    properties:
+      error_message:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /facility/{facility_id}:
+    get:
+      description: When found some facility, it will returned as json object as status
+        200, otherwise will return the status 404 not found. If some error happens,
+        it will return the status code 400
+      parameters:
+      - description: facility find by id
+        in: path
+        name: facility_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Facility'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.BadResponse'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get Facility By ID
+      tags:
+      - FACILITY
+  /shifts/available/{worker_id}/{profession}:
+    get:
+      description: It will list all shifts available for some worker, grouped by date.
+        If some error happens, it will return the status code 400
+      parameters:
+      - description: worker id to find
+        in: path
+        name: worker_id
+        required: true
+        type: integer
+      - description: The worker profession, must be 'CNA', 'LVW' or 'RN'.
+        in: path
+        name: profession
+        required: true
+        type: string
+      - description: offset to start search
+        in: query
+        name: offset
+        type: integer
+      - description: limit of return values
+        in: query
+        name: limit
+        type: integer
+      - description: start date like '2006-01-02'
+        in: query
+        name: start
+        type: string
+      - description: end date like '2006-01-02'
+        in: query
+        name: end
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GroupedByDateShift'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.BadResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest.BadResponse'
+      summary: Get Available shifts
+      tags:
+      - SHIFTS
+  /worker/{worker_id}:
+    get:
+      description: When found some worker, it will returned as json object as status
+        200, otherwise will return the status 404 not found. If some error happens,
+        it will return the status code 400
+      parameters:
+      - description: worker find by id
+        in: path
+        name: worker_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Worker'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.BadResponse'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Get Worker By ID
+      tags:
+      - WORKER
+swagger: "2.0"

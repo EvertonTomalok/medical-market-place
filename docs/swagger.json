@@ -1,0 +1,266 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/facility/{facility_id}": {
+            "get": {
+                "description": "When found some facility, it will returned as json object as status 200, otherwise will return the status 404 not found. If some error happens, it will return the status code 400",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "FACILITY"
+                ],
+                "summary": "Get Facility By ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "facility find by id",
+                        "name": "facility_id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Facility"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.BadResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/shifts/available/{worker_id}/{profession}": {
+            "get": {
+                "description": "It will list all shifts available for some worker, grouped by date. If some error happens, it will return the status code 400",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SHIFTS"
+                ],
+                "summary": "Get Available shifts",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "worker id to find",
+                        "name": "worker_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "The worker profession, must be 'CNA', 'LVW' or 'RN'.",
+                        "name": "profession",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "offset to start search",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit of return values",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "start date like '2006-01-02'",
+                        "name": "start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "end date like '2006-01-02'",
+                        "name": "end",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GroupedByDateShift"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.BadResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/rest.BadResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/worker/{worker_id}": {
+            "get": {
+                "description": "When found some worker, it will returned as json object as status 200, otherwise will return the status 404 not found. If some error happens, it will return the status code 400",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WORKER"
+                ],
+                "summary": "Get Worker By ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "worker find by id",
+                        "name": "worker_id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Worker"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.BadResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.FacilityDTO": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.GroupedByDateShift": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/definitions/dto.ShiftDTO"
+                }
+            }
+        },
+        "dto.ShiftDTO": {
+            "type": "object",
+            "properties": {
+                "end": {
+                    "type": "string"
+                },
+                "facility": {
+                    "$ref": "#/definitions/dto.FacilityDTO"
+                },
+                "facility_id": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_deleted": {
+                    "type": "boolean"
+                },
+                "profession": {
+                    "type": "string"
+                },
+                "start": {
+                    "type": "string"
+                },
+                "worker_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entities.Facility": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.Profession": {
+            "type": "string",
+            "enum": [
+                "CNA",
+                "LVW",
+                "RN"
+            ],
+            "x-enum-varnames": [
+                "CNA",
+                "LVW",
+                "RN"
+            ]
+        },
+        "entities.Worker": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "profession": {
+                    "$ref": "#/definitions/entities.Profession"
+                }
+            }
+        },
+        "rest.BadResponse": {
+            "type": "object",
+            "properties": {
+                "error_message": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
